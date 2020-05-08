@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Trouver un magasin près de chez vous!</h1>
+    <p>Entrez votre adresse, ville ou code postal pour trouver des magasins près de chez vous!</p>
+
+</div>
+    <form action="/stores" method="POST">
+    <div class="form-group">
+        <label for="address"><b>Votre adresse:</b></label>
+        <input type="text" name="loc" class="form-control" id="address" aria-describedby="emailHelp" placeholder="Entrer l'adresse">
+    </div>
+      <button type="submit" class="btn btn-primary">Chercher!</button>
+</form>

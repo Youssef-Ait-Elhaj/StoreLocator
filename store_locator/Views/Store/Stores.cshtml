@@ -1,0 +1,44 @@
+@* AIzaSyCYAGMshOEzihNSk12ZY0evyqld6mnl6Kg
+
+1600 Amphitheatre Parkway, Mountain View, CA *@
+
+<html>
+<head>  
+    @* <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYAGMshOEzihNSk12ZY0evyqld6mnl6Kg"></script>   *@
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYAGMshOEzihNSk12ZY0evyqld6mnl6Kg">
+    </script>
+</head>  
+<body>  
+    @* <input type="button" value="Click to Display Map" onclick="DisplayGoogleMap()" />   *@
+    <div id="myDiv" style="width:100%;height:400px;"></div>  
+      
+    <script type="text/javascript">  
+        function DisplayGoogleMap() {  
+  
+            //Set the Latitude and Longitude of the Map: Maarif
+            var myAddress = new google.maps.LatLng(33.581792, -7.644422);  
+  
+            //Create Options or set different Characteristics of Google Map  
+            var mapOptions = {  
+                center: myAddress,  
+                zoom: 15,  
+                minZoom: 15,  
+                mapTypeId: google.maps.MapTypeId.ROADMAP  
+            };  
+  
+            //Display the Google map in the div control with the defined Options  
+            var map = new google.maps.Map(document.getElementById("myDiv"), mapOptions);  
+  
+            //Set Marker on the Map  
+            var marker = new google.maps.Marker({  
+                position: myAddress,  
+                animation: google.maps.Animation.BOUNCE,  
+            });  
+  
+            marker.setMap(map);
+           }
+           DisplayGoogleMap();
+    </script>
+</body>
+</html>
