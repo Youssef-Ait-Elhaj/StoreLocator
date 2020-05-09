@@ -1,11 +1,15 @@
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace store_locator.Models
 {
     public class StoreContext
     {
+        private static readonly HttpClient client = new HttpClient();
         public string ConnectionString { get; set; }
 
         public StoreContext(string connectionString)
@@ -18,14 +22,18 @@ namespace store_locator.Models
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<Store> getStores(string address)
+        public List<Store> getStores(double lat, double lng)
         {
             List<Store> stores = new List<Store>();
             using (MySqlConnection connection = GetConnection())
             {
                 connection.Open();
-                MySqlCommand cmd = new MySqlCommand("SELECT * FROM Stores", connection);
-                // cmd.Parameters.Add(new MySqlParameter("@latitude", ))
+
+                // request to return nearby stores
+                MySqlCommand cmd = new MySqlCommand("SELECT * FROM Stores WHERE ABS(features__geometry__coordinates__002 - @latitude) < 0.006 AND ABS(features__geometry__coordinates__001 - @longtitude) < 0.006", connection);
+                cmd.Parameters.Add(new MySqlParameter("@latitude", lat));
+                cmd.Parameters.Add(new MySqlParameter("@longtitude", lng));
+                // MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -41,7 +49,7 @@ namespace store_locator.Models
                 }
             }
 
-            return stores;
+            return stores;        
         }
     }
 }
