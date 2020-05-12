@@ -60,12 +60,12 @@ namespace store_locator.Controllers
             // Use the list to build a FeatureCollection
             FeatureCollection mapFeatureCollection = new FeatureCollection(mapFeatures);
             // FeatureCollection instances provides the method ToJson which converts them to Json strings, use it before sending the FeatureCollection to the frontend
-            string nearbyStoresAsGeoJSON = JsonConvert.SerializeObject(mapFeatureCollection, Formatting.Indented);
+            string nearbyStoresAsGeoJSON = JsonConvert.SerializeObject(mapFeatureCollection);
             Console.WriteLine(nearbyStoresAsGeoJSON);
             
             // pass the json to view to mark them
             ViewBag.nearbyStores = nearbyStoresAsGeoJSON;
-            ViewBag.msg = "hello";
+            // ViewBag.msg = "hello";
             return View("Stores");
         }
     }

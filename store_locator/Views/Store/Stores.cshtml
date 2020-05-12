@@ -48,11 +48,9 @@ AIzaSyDM5bVA13P4nNK7bR5YQIswK4yaZ8nWngI
         zoom: 15
       });
       
-      var stores = '@ViewBag.nearbyStores';
-      console.log(stores);
-      console.log(typeof stores);
-      var geojson = JSON.parse(stores);
+      var geojson = @Html.Raw(@ViewBag.nearbyStores);
       console.log(typeof geojson);
+      console.log(geojson);
       
       // add markers to map
       geojson.features.forEach(function(marker) {
