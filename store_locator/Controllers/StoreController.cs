@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 using store_locator.Models;
 using System.Net.Http;
+using System.Web;
+using GeoJSON.Net.Feature;
+using GeoJSON.Net.Geometry;
 using Newtonsoft.Json;
 
 
@@ -37,14 +40,33 @@ namespace store_locator.Controllers
             double lat = obj.results[0].locations[0].latLng.lat;
             double lng = obj.results[0].locations[0].latLng.lng;
             
-            List<Store> nearbyStores = context.getStores(lat, lng);
-            Console.WriteLine("{0} nearby stores", nearbyStores.Count);
+            List<Store> nearbyStores = await context.getStores(lat, lng);
+
+            // serialize nearbyStores object to load it into map as geoJSON data to be able to 
+            // able to add markers to these locations
+            string nearbyStoresAsString = JsonConvert.SerializeObject(nearbyStores, Formatting.Indented);
+            
+            List<Feature> mapFeatures = new List<Feature>();
+            
+            // For each position from the response create a Feature and add it to previously created list
             foreach (Store st in nearbyStores)
             {
-                Console.WriteLine(st.address);
+                mapFeatures.Add(new Feature(
+                    new Point(new Position(st.latitude, st.longtitude)),
+                    new Dictionary<string, dynamic>() {{"address", st.address}}
+                    ));
             }
             
-            return  View("Stores", nearbyStores);
+            // Use the list to build a FeatureCollection
+            FeatureCollection mapFeatureCollection = new FeatureCollection(mapFeatures);
+            // FeatureCollection instances provides the method ToJson which converts them to Json strings, use it before sending the FeatureCollection to the frontend
+            string nearbyStoresAsGeoJSON = JsonConvert.SerializeObject(mapFeatureCollection, Formatting.Indented);
+            Console.WriteLine(nearbyStoresAsGeoJSON);
+            
+            // pass the json to view to mark them
+            ViewBag.nearbyStores = nearbyStoresAsGeoJSON;
+            ViewBag.msg = "hello";
+            return View("Stores");
         }
     }
 }

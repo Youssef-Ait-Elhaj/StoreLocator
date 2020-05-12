@@ -4,62 +4,70 @@ Boulevard Bir Anzarane, Casablanca: 33.582833, -7.640833
 52YfEnPGDpkwfmKBphJ4egihwH6w09K8
 
 112 Rue Al Fourate, Casablanca 20250: 33.583916, -7.645138
+1600 Amphitheatre Parkway, Mountain View, CA 
 
-1600 Amphitheatre Parkway, Mountain View, CA *@
-
-<html>
-<head>  
-    @* <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYAGMshOEzihNSk12ZY0evyqld6mnl6Kg"></script>   *@
-    <!--<script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYAGMshOEzihNSk12ZY0evyqld6mnl6Kg">
-    </script>-->
+AIzaSyDM5bVA13P4nNK7bR5YQIswK4yaZ8nWngI 
+*@
     
+@model IEnumerable<store_locator.Models.Store>
+<html>
+<head>    
 
-    <script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
-    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css' rel='stylesheet' />
+    
+    <style>
+        .marker {
+          background-image: url('/images/mapboxmarker.png');
+          background-size: cover;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+        
+        .mapboxgl-popup {
+          max-width: 200px;
+        }c
+        
+        .mapboxgl-popup-content {
+          text-align: center;
+          font-family: 'Open Sans', sans-serif;
+        }
+    </style>
 
-</head>  
-<body>  
+</head>
+<body>
 <div id='map' style='width: 1000px; height: 500px;'></div>
-<script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoieW9zb3MiLCJhIjoiY2s5em9oZnVmMDQ1ZTNscG0xM3NnMHB5OCJ9.pMJU6jYzp8Uj1BYqfYG6GQ';
-  var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [-7.637536, 33.578687],
-    zoom: 11.15
-  });
-</script>
-
-@* <input type="button" value="Click to Display Map" onclick="DisplayGoogleMap()" />   *@
-    @* <div id="myDiv" style="width:100%;height:400px;"></div>  
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoieW9zb3MiLCJhIjoiY2s5em9oZnVmMDQ1ZTNscG0xM3NnMHB5OCJ9.pMJU6jYzp8Uj1BYqfYG6GQ';
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-7.637536, 33.578687],
+        zoom: 15
+      });
       
-    <script type="text/javascript">  
-        function DisplayGoogleMap() {  
-  
-            //Set the Latitude and Longitude of the Map: Maarif
-            var myAddress = new google.maps.LatLng(33.581792, -7.644422);  
-  
-            //Create Options or set different Characteristics of Google Map  
-            var mapOptions = {  
-                center: myAddress,  
-                zoom: 15,  
-                minZoom: 15,  
-                mapTypeId: google.maps.MapTypeId.ROADMAP  
-            };  
-  
-            //Display the Google map in the div control with the defined Options  
-            var map = new google.maps.Map(document.getElementById("myDiv"), mapOptions);  
-  
-            //Set Marker on the Map  
-            var marker = new google.maps.Marker({  
-                position: myAddress,  
-                animation: google.maps.Animation.BOUNCE,  
-            });  
-  
-            marker.setMap(map);
-           }
-           DisplayGoogleMap();
-    </script> *@
+      var stores = '@ViewBag.nearbyStores';
+      console.log(stores);
+      console.log(typeof stores);
+      var geojson = JSON.parse(stores);
+      console.log(typeof geojson);
+      
+      // add markers to map
+      geojson.features.forEach(function(marker) {
+      
+        // create a HTML element for each feature
+        var el = document.createElement('div');
+        el.className = 'marker';
+      
+        // make a marker for each feature and add to the map
+        new mapboxgl.Marker(el)
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+          .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+          .addTo(map);
+      });
+    </script>
 </body>
 </html>

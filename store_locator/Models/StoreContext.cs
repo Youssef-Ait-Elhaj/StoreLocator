@@ -22,17 +22,18 @@ namespace store_locator.Models
             return new MySqlConnection(ConnectionString);
         }
 
-        public List<Store> getStores(double lat, double lng)
+        public async Task<List<Store>> getStores(double lat, double lng)
         {
             List<Store> stores = new List<Store>();
             using (MySqlConnection connection = GetConnection())
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 // request to return nearby stores
                 MySqlCommand cmd = new MySqlCommand("SELECT * FROM Stores WHERE ABS(features__geometry__coordinates__002 - @latitude) < 0.006 AND ABS(features__geometry__coordinates__001 - @longtitude) < 0.006", connection);
                 cmd.Parameters.Add(new MySqlParameter("@latitude", lat));
                 cmd.Parameters.Add(new MySqlParameter("@longtitude", lng));
+                cmd.CommandTimeout = 100;
                 // MySqlDataAdapter dataAdapter = new MySqlDataAdapter(cmd);
                 using (var reader = cmd.ExecuteReader())
                 {
